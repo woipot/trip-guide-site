@@ -1,6 +1,6 @@
 ---
 name: trip-guide-site
-description: Plans a trip and builds it as a polished, interactive three-page travel site (plan with day-by-day route maps, distances, photo galleries and a live budget with upgrade options; an offline pocket guide with illustrated chapters per sight; a phrasebook with big-text display and speech), published as an Artifact. Use this whenever the user wants to plan a trip, vacation, city break or itinerary — "хочу поехать в …", "составь программу поездки", "план путешествия", "маршрут по городу", "отель до N тысяч", "что посмотреть в …", "путеводитель", "экскурсия без гида" — or wants an existing travel plan turned into a nicer/interactive report, even if they only ask for "an HTML report" or a table. Also use it to update a trip site made earlier with this skill.
+description: Plans a trip and builds it as a polished, interactive three-page travel site (plan with day-by-day route maps, distances, photo galleries and a live budget with upgrade options; an offline pocket guide with illustrated chapters per sight; a phrasebook with big-text display and speech), ready for static hosting or Artifact publishing. Use this whenever the user wants to plan a trip, vacation, city break or itinerary — "хочу поехать в …", "составь программу поездки", "план путешествия", "маршрут по городу", "отель до N тысяч", "что посмотреть в …", "путеводитель", "экскурсия без гида" — or wants an existing travel plan turned into a nicer/interactive report, even if they only ask for "an HTML report" or a table. Also use it to update a trip site made earlier with this skill.
 ---
 
 # Trip guide site
@@ -14,6 +14,12 @@ Turns a trip request into a researched plan and a three-page site:
 The bundled scripts do the heavy lifting; your job is research, judgment, writing and assembling `trip.json`.
 
 Before starting, read `references/defaults.md` — the default brief (food price caps, hotel level, design, options, distances, page split) that fills gaps the user leaves. The user's own instructions always win.
+
+## Codex compatibility
+
+The `name`/`description` frontmatter and bundled resources also work as a Codex skill. Resolve `scripts/`, `references/` and `assets/` relative to this skill's installed directory; keep trip data and output in the working directory.
+
+In Codex, use its web search instead of `WebSearch`, and its image viewer instead of `Read` for photo previews. If no sub-agent tool is available, run the guide-writer prompts in `references/guide-agents.md` sequentially or in separate `codex exec` sessions, each writing its own group file. Replace the Claude browser preview tool with `python3 -m http.server 8765 --directory <out>` and an available browser. Without the Artifact tool, deliver the standalone `index.html`, `guide.html`, `phrases.html` and `img/`, or publish that output folder to GitHub Pages; remove unused photos from the output folder when updating.
 
 ## Workflow
 

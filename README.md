@@ -1,29 +1,54 @@
 # trip-guide-site
 
-A [Claude Code](https://claude.com/claude-code) skill that plans a trip and builds it as an interactive three-page travel site:
+An Agent Skill for [Claude Code](https://claude.com/claude-code) and [OpenAI Codex](https://developers.openai.com/codex/) that plans a trip and builds it as an interactive three-page travel site:
 
 - **Plan**: hero photo, key facts, overview map, hotel picker, day cards with photo galleries, a timeline with distances and walking time between stops, an OpenStreetMap route map per day, Yandex and Google route links, upgrade options with price differences, and a live budget that recalculates as you choose.
 - **Pocket guide**: one illustrated chapter per sight, with a story, 5–7 stations in walking order, a "find on site" checklist, did-you-know facts and a tip. Chapters can be read aloud or followed step by step like an audio guide, and work offline once the page is loaded.
 - **Phrasebook**: categories, search, tap a phrase to show it in huge text, and speech playback.
 
-Claude does the research and writing. Parallel "guide" sub-agents write and fact-check the chapters and pick freely licensed photos. The bundled Python scripts handle geocoding, map data, photo licensing and credits, the maps and the final HTML.
+The agent does the research and writing. Guide-writer prompts produce fact-checked chapters and pick freely licensed photos, using parallel sub-agents when available or running sequentially. The bundled Python scripts handle geocoding, map data, photo licensing and credits, the maps and the final HTML.
 
 > The generated UI text is in **Russian**, and prices convert from local currency to a home currency of your choice. To produce sites in another language, translate the strings in `scripts/build_site.py` and `assets/*.js`.
 
 ## Install
 
+### Claude Code
+
 ```bash
-git clone https://github.com/<you>/trip-guide-site ~/.claude/skills/trip-guide-site
+mkdir -p ~/.claude/skills
+git clone https://github.com/woipot/trip-guide-site ~/.claude/skills/trip-guide-site
 ```
 
-Restart Claude Code. The skill triggers on requests like "plan a 10-day trip to Istanbul, hotel up to €100/night" or "хочу поехать в Гуанчжоу на неделю, составь программу".
+Restart Claude Code.
+
+### OpenAI Codex
+
+```bash
+mkdir -p ~/.agents/skills
+git clone https://github.com/woipot/trip-guide-site ~/.agents/skills/trip-guide-site
+```
+
+`~/.agents/skills` is where Codex looks for personal skills; it also scans `.agents/skills` inside a repository, so you can vendor the skill into a project instead. The `SKILL.md` frontmatter already has the required `name` and `description`, so no conversion is needed. Restart Codex if the skill does not appear in `/skills`. See the [Codex skills documentation](https://developers.openai.com/codex/skills).
+
+## Quick start
+
+Start Claude Code or Codex in a writable folder for your trip data and generated site, then ask:
+
+> Use the trip-guide-site skill to plan a 10-day trip to Istanbul, hotel up to €100/night.
+
+Or in Codex, explicitly mention the skill:
+
+> $trip-guide-site Хочу поехать в Гуанчжоу на неделю, составь программу.
+
+The agent gathers the brief, researches current facts and proposes the itinerary before building. Open the generated `index.html` locally, or publish the output folder (including both companion pages and images) to GitHub Pages or another static host. The Codex compatibility note in `SKILL.md` covers alternatives to Claude-specific tools.
 
 ## Requirements
 
-- Claude Code with web search and sub-agents. The Artifact tool is optional and is used to publish a private shareable page.
-- Python 3.9+ (standard library only).
-- Image compression uses `sips` (built into macOS) or [Pillow](https://pypi.org/project/Pillow/) on other systems.
-- Internet access to OpenStreetMap Nominatim and Overpass, and to Wikimedia Commons.
+- Claude Code or Codex with web search, shell access and a writable working folder. Sub-agents and the Artifact publishing tool are optional.
+- Python 3.9+; building HTML uses only the standard library.
+- Photo compression uses `sips` (built into macOS) or [Pillow](https://pypi.org/project/Pillow/). Contact sheets require Pillow or, on macOS, Swift with AppKit. Install Pillow into the Python environment used by `python3` (for example, a virtual environment); `python3 -I` ignores user-site packages.
+- Internet access for research and fetching data from OpenStreetMap Nominatim, Overpass and Wikimedia Commons. The bundled example can be built without network access.
+- A browser for preview; speech playback depends on the browser's available voices.
 
 ## How it works
 
@@ -35,7 +60,7 @@ Restart Claude Code. The skill triggers on requests like "plan a 10-day trip to 
    - `scripts/osm_fetch.py`: water, parks and metro layers;
    - `scripts/commons_search.py` and `scripts/commons_fetch.py`: freely licensed photos with credits;
    - `scripts/contact_sheet.py`: a grid of candidate photos to review visually.
-5. Guide chapters from parallel agents, using the prompt in `references/guide-agents.md`.
+5. Guide chapters from parallel agents or sequential writing, using the prompt in `references/guide-agents.md`.
 6. `scripts/build_site.py trip/ out/` builds `index.html`, `guide.html` and `phrases.html`, plus a fragment that can be published as an Artifact. The data format is described in `references/trip-json.md`.
 7. Publish as an Artifact, or upload the output folder to any static host such as GitHub Pages.
 
@@ -56,3 +81,7 @@ Edit `references/defaults.md` to set your own default style: food budget per mea
 - Maps: © OpenStreetMap contributors, [ODbL](https://www.openstreetmap.org/copyright). The attribution is added to every site automatically. Geocoding uses Nominatim at 1 request per second, per its [usage policy](https://operations.osmfoundation.org/policies/nominatim/).
 - Photos: Wikimedia Commons, limited to CC0, public domain, CC BY and CC BY-SA. The author and licence of every photo are listed on the page that shows it.
 - Prices, visa rules and opening hours in generated plans are estimates as of the build date. Check them before travelling.
+
+## Кратко по-русски
+
+Навык для Claude Code и OpenAI Codex: исследует поездку и собирает сайт на русском языке с маршрутом по дням, картами, фотографиями и интерактивным бюджетом, карманным гидом и разговорником. Установите репозиторий по инструкции выше и опишите направление, даты, бюджет и интересы. Готовый сайт можно открыть локально или разместить на GitHub Pages; цены, визовые правила и часы работы нужно проверить перед поездкой.
