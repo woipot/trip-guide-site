@@ -1,0 +1,454 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Словарик</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@600;900&display=swap"><style>html{color-scheme:light}body{margin:0;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style><style>/* Layout: журнальный путеводитель — фото на всю ширину, дни как развороты: галерея сверху, таймлайн слева, карта справа */
+:root {
+  --bg: #F2F4F3;
+  --surface: #FFFFFF;
+  --ink: #12201C;
+  --muted: #56655F;
+  --line: #D6DEDA;
+  --jade: #0E6A58;
+  --jade-soft: #E0EEE9;
+  --vermilion: #C23B26;
+  --gold: #996611;
+  --gold-soft: #F5EBD6;
+  --land: #ECF0EE;
+  --water: #BFD9DB;
+  --grid: #DEE5E2;
+  --park: #D3E6D6;
+  --metro: #B9C4C0;
+  --f-display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --f-body: "Onest", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --f-zh: "Noto Serif SC", "Songti SC", "SimSun", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1513; --surface: #15201D; --ink: #E4ECE8; --muted: #93A49D; --line: #263430;
+    --jade: #52BC9F; --jade-soft: #173029; --vermilion: #F06A52; --gold: #E2AE57; --gold-soft: #2E2516;
+    --land: #17221F; --water: #1F3D42; --grid: #1D2A27; --park: #1A3226; --metro: #34433F; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1513; --surface: #15201D; --ink: #E4ECE8; --muted: #93A49D; --line: #263430;
+  --jade: #52BC9F; --jade-soft: #173029; --vermilion: #F06A52; --gold: #E2AE57; --gold-soft: #2E2516;
+  --land: #17221F; --water: #1F3D42; --grid: #1D2A27; --park: #1A3226; --metro: #34433F; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.6rem, 4.4vw, 2.6rem); line-height: 1.1; letter-spacing: -0.01em; }
+h3 { font-family: var(--f-display); font-weight: 500; font-size: clamp(1.15rem, 2.6vw, 1.5rem); line-height: 1.2; }
+p { margin: 0; }
+a { color: var(--jade); text-underline-offset: 3px; }
+a:focus-visible, input:focus-visible { outline: 2px solid var(--vermilion); outline-offset: 2px; }
+.zh { font-family: var(--f-zh); font-weight: 600; }
+.eyebrow { font-family: var(--f-mono); font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
+section.block { padding-block: 72px 0; display: grid; gap: 22px; }
+.sec-head { display: grid; gap: 10px; max-width: 760px; }
+.sec-head p { color: var(--muted); font-size: 1.05rem; }
+
+/* ---------- HERO ---------- */
+.hero { position: relative; color: #fff; background: #0A1714; overflow: hidden; }
+.hero img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,14,12,.25) 0%, rgba(6,14,12,.15) 40%, rgba(6,14,12,.88) 100%); }
+.hero .inner { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding-inline: 20px; padding-block: 140px 56px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.hero .kicker { font-family: var(--f-mono); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.82); }
+.hero h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.8rem, 10vw, 7.4rem); line-height: .95; letter-spacing: -0.03em; margin-top: 12px; }
+.hero .sub { margin-top: 18px; max-width: 54ch; font-size: 1.12rem; color: rgba(255,255,255,.9); }
+.hero .vert { writing-mode: vertical-rl; font-family: var(--f-zh); font-weight: 900; font-size: clamp(4rem, 12vw, 8.5rem); line-height: 1; color: #F2563C; text-shadow: 0 4px 30px rgba(0,0,0,.4); }
+
+.facts { position: relative; z-index: 2; margin-top: -28px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--surface); border-radius: 14px; box-shadow: 0 10px 40px rgba(10,30,25,.12); overflow: hidden; }
+.facts > div { padding: 18px 20px; border-left: 1px solid var(--line); min-width: 0; }
+.facts > div:first-child { border-left: 0; }
+.facts b { display: block; font-family: var(--f-display); font-weight: 500; font-size: 1.3rem; margin-top: 4px; }
+.facts span.s { color: var(--muted); font-size: .86rem; }
+
+/* ---------- OVERVIEW ---------- */
+.overview { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.map-frame { background: var(--surface); border-radius: 14px; padding: 10px; border: 1px solid var(--line); }
+svg.map { display: block; width: 100%; height: auto; border-radius: 8px; }
+.map .m-land { fill: var(--land); }
+.map .m-grid { stroke: var(--grid); stroke-width: .6; fill: none; }
+.map .m-water { fill: var(--water); }
+.map .m-park { fill: var(--park); }
+.map .m-metro { fill: none; stroke: var(--metro); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.map .m-route { fill: none; stroke: var(--vermilion); stroke-width: 2.4; stroke-dasharray: 7 6; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
+.map .m-pin circle { fill: var(--vermilion); stroke: var(--surface); stroke-width: 3; }
+.map .m-pin text { fill: #fff; font: 600 15px var(--f-body); }
+.map .m-alt circle { fill: var(--jade); }
+.map .m-hotel rect { fill: var(--jade); stroke: var(--surface); stroke-width: 2; }
+.map .m-hotel path { stroke: #fff; stroke-width: 1.8; fill: none; stroke-linecap: round; }
+.map .m-label { font: 500 16.5px var(--f-body); fill: var(--ink); paint-order: stroke; stroke: var(--land); stroke-width: 5px; stroke-linejoin: round; }
+.map .m-hl { fill: var(--jade); font-weight: 600; }
+.map .m-scale path { stroke: var(--muted); fill: none; stroke-width: 1.2; }
+.map .m-scale text, .map .m-north text { font: 500 13px var(--f-mono); fill: var(--muted); }
+.map .m-north path { fill: var(--muted); }
+.map-note { font-size: .8rem; color: var(--muted); padding: 8px 6px 2px; }
+
+.daylist { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.daylist a { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 9px 10px; border-radius: 10px; text-decoration: none; color: var(--ink); }
+.daylist a:hover { background: var(--surface); }
+.daylist .num { font-family: var(--f-display); font-weight: 700; color: var(--vermilion); font-size: 1.05rem; }
+.daylist .d { font-family: var(--f-mono); font-size: .74rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; display: block; }
+.daylist .t { font-weight: 500; }
+
+/* ---------- HOTELS ---------- */
+.hotels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.hotel { background: var(--surface); border-radius: 14px; overflow: hidden; border: 1px solid var(--line); display: grid; grid-template-rows: auto 1fr; }
+.hotel .ph { aspect-ratio: 16 / 10; overflow: hidden; position: relative; }
+.hotel .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hotel .nights { position: absolute; left: 14px; top: 14px; background: var(--vermilion); color: #fff; font-family: var(--f-mono); font-size: .78rem; padding: 4px 10px; border-radius: 999px; letter-spacing: .04em; }
+.hotel .body { padding: 20px 22px 22px; display: grid; gap: 10px; align-content: start; }
+.hotel .zh { color: var(--muted); font-size: 1rem; }
+.hotel .price { font-family: var(--f-mono); color: var(--gold); font-size: .95rem; }
+.combo { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; align-items: center; background: var(--jade-soft); border-radius: 12px; padding: 16px 20px; }
+.combo b { font-family: var(--f-display); font-weight: 500; font-size: 1.15rem; }
+.combo span { font-family: var(--f-mono); font-size: .92rem; }
+
+.tbl { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.total td { font-weight: 600; background: var(--jade-soft); }
+.chip { display: inline-block; font-size: .72rem; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--jade-soft); color: var(--jade); white-space: nowrap; }
+.chip.red { background: color-mix(in srgb, var(--vermilion) 14%, transparent); color: var(--vermilion); }
+.chip.gold { background: var(--gold-soft); color: var(--gold); }
+.note { background: var(--gold-soft); border-radius: 12px; padding: 14px 18px; font-size: .95rem; }
+.note b { color: var(--gold); }
+
+/* ---------- DAYS ---------- */
+.day { padding-block: 64px 0; display: grid; gap: 22px; scroll-margin-top: 20px; }
+.day + .day { border-top: 1px solid var(--line); margin-top: 64px; }
+.day-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 26px; align-items: start; }
+.day-no { font-family: var(--f-display); font-weight: 700; font-size: clamp(3.2rem, 8vw, 5.6rem); line-height: .85; color: transparent; -webkit-text-stroke: 2px var(--vermilion); letter-spacing: -0.04em; }
+.day-head .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.day-head h3 { font-size: clamp(1.35rem, 3.2vw, 2rem); font-weight: 700; margin-top: 6px; }
+.day-head .lede { color: var(--muted); margin-top: 8px; max-width: 66ch; }
+
+.gallery { display: grid; gap: 10px; }
+.gallery figure { margin: 0; position: relative; overflow: hidden; border-radius: 12px; background: var(--land); min-height: 0; }
+.gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 14px 10px; font-size: .84rem; color: #fff; background: linear-gradient(180deg, transparent, rgba(0,0,0,.72)); }
+.g3 { grid-template-columns: 2fr 1fr; grid-template-rows: 200px 200px; }
+.g3 figure:first-child { grid-row: span 2; }
+.g2 { grid-template-columns: 1.6fr 1fr; grid-template-rows: 340px; }
+.g1 { grid-template-rows: 380px; }
+
+.day-body { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 15px; top: 14px; bottom: 14px; width: 2px; background: var(--line); }
+
+.timeline .dot { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; font-size: .85rem; position: relative; z-index: 1; }
+.timeline .dot.pin { background: var(--vermilion); color: #fff; box-shadow: 0 0 0 4px var(--bg); }
+.timeline .dot.alt { background: var(--jade); }
+.timeline .dot.plain { background: var(--bg); }
+.timeline .dot.plain::after { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--muted); background: var(--bg); }
+.timeline .row1 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.timeline .time { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); }
+.timeline .price { margin-left: auto; font-family: var(--f-mono); font-size: .8rem; color: var(--gold); background: var(--gold-soft); padding: 1px 8px; border-radius: 6px; white-space: nowrap; }
+.timeline b { font-weight: 600; font-size: 1.04rem; }
+.timeline .zh { color: var(--muted); font-size: .92rem; margin-left: 6px; }
+.timeline p { color: var(--muted); font-size: .94rem; margin-top: 3px; }
+
+.map-card { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: grid; gap: 10px; }
+.map-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.map-links a { font-size: .86rem; text-decoration: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 6px 12px; border-radius: 999px; }
+.map-links a:hover { border-color: var(--jade); color: var(--jade); }
+.cost { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+.cost .v { font-family: var(--f-mono); font-weight: 500; }
+
+/* ---------- FOOD ---------- */
+.food-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: stretch; }
+.food-hero figure { margin: 0; border-radius: 14px; overflow: hidden; min-height: 300px; position: relative; }
+.food-hero figure img { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; inset: 0; }
+.rest-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.rest { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.rest h3 { font-size: 1.05rem; }
+.rest ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.rest li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; font-size: .93rem; }
+.rest li small { display: block; color: var(--muted); font-size: .84rem; }
+.rest .p { font-family: var(--f-mono); font-size: .82rem; color: var(--gold); white-space: nowrap; }
+.dishes { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.dish { margin: 0; background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+.dish .ph { aspect-ratio: 4 / 3; overflow: hidden; }
+.dish img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dish figcaption { padding: 10px 12px 12px; display: grid; gap: 1px; }
+.dish .zh { font-size: 1.45rem; line-height: 1.2; }
+.dish .r { font-weight: 600; font-size: .95rem; }
+.dish small { color: var(--muted); font-size: .82rem; }
+.etiquette { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.etiquette div { border-top: 2px solid var(--vermilion); padding-top: 10px; font-size: .93rem; min-width: 0; }
+
+/* ---------- STAY / SHOP ---------- */
+.stay { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 18px; }
+.stay-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.stay-card.main { border-top: 4px solid var(--jade); }
+.stay-card .zh { color: var(--muted); }
+.stay-card .price { font-family: var(--f-mono); color: var(--gold); font-size: .92rem; }
+.shop-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.shop-place { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; grid-template-rows: 220px auto; min-width: 0; }
+.shop-place img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.shop-place > div { padding: 18px 20px 20px; display: grid; gap: 8px; }
+/* ---------- MORE ---------- */
+.trips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.trip { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+.trip .ph { aspect-ratio: 3 / 2; overflow: hidden; }
+.trip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.trip .body { padding: 16px 18px 18px; display: grid; gap: 8px; align-content: start; }
+.trip .route { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); }
+.trip .p { font-family: var(--f-mono); font-size: .86rem; color: var(--gold); }
+
+/* ---------- BUDGET ---------- */
+.bar { display: flex; height: 54px; border-radius: 10px; overflow: hidden; }
+.bar div { display: flex; align-items: center; padding-inline: 12px; color: #fff; font-size: .82rem; font-weight: 600; white-space: nowrap; overflow: hidden; min-width: 0; }
+.bar .b1 { background: #2D5C8F; } .bar .b2 { background: var(--jade); } .bar .b3 { background: var(--vermilion); } .bar .b4 { background: #8A7A55; }
+.bar-legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: .88rem; color: var(--muted); }
+.bar-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.big-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.big-total b { font-family: var(--f-display); font-weight: 700; font-size: clamp(2rem, 6vw, 3.4rem); letter-spacing: -0.02em; }
+
+/* ---------- PRACTICAL ---------- */
+.prac { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.prac > div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; min-width: 0; }
+.prac h3 { font-size: 1.1rem; margin-bottom: 10px; }
+.prac ul { margin: 0; padding-left: 1.1em; display: grid; gap: 7px; font-size: .95rem; }
+.phr { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.phr div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.phr .zh { display: block; font-size: 1.5rem; line-height: 1.25; }
+.phr small { color: var(--muted); display: block; }
+
+.check { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.check label { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); height: 100%; }
+.check input { margin-top: 4px; accent-color: var(--jade); width: 18px; height: 18px; flex: none; }
+.check input:checked + span { color: var(--muted); text-decoration: line-through; }
+
+footer { margin-top: 80px; padding-block: 28px 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; display: grid; gap: 12px; }
+.credits { columns: 3 260px; column-gap: 28px; font-size: .78rem; line-height: 1.5; }
+.credits div { break-inside: avoid; margin-bottom: 4px; }
+
+
+
+/* ---------- NAV / GUIDE / PHRASES / SOUVENIRS ---------- */
+.sitenav { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; margin-top: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; width: fit-content; max-width: 100%; }
+.sitenav a { text-decoration: none; color: var(--ink); font-weight: 600; font-size: .92rem; padding: 8px 16px; border-radius: 10px; }
+.sitenav a[aria-current="page"] { background: var(--vermilion); color: #fff; }
+.sitenav a:not([aria-current="page"]):hover { background: var(--bg); }
+
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+nav.toc a { text-decoration: none; color: var(--ink); border: 1px solid var(--line); background: var(--surface); padding: 6px 13px; border-radius: 999px; font-size: .88rem; }
+nav.toc a:hover { border-color: var(--vermilion); color: var(--vermilion); }
+.glink { display: inline-block; margin-top: 6px; font-size: .84rem; font-weight: 600; color: var(--jade); text-decoration: none; }
+.gtoc { display: flex; flex-wrap: wrap; gap: 6px; }
+.gtoc a { font-size: .82rem; color: var(--muted); text-decoration: none; padding: 3px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.gtoc a:hover { color: var(--jade); border-color: var(--jade); }
+.glist { display: grid; gap: 12px; }
+.gcard { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; scroll-margin-top: 16px; }
+.gcard[open] { border-color: color-mix(in srgb, var(--jade) 50%, var(--line)); }
+.gcard summary { list-style: none; cursor: pointer; padding: 18px 22px; display: grid; gap: 6px; }
+.gcard summary::-webkit-details-marker { display: none; }
+.gsum { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
+.gtitle { font-family: var(--f-display); font-weight: 500; font-size: 1.15rem; }
+.gtitle .zh { color: var(--muted); font-size: .95rem; }
+.gmeta { font-family: var(--f-mono); font-size: .76rem; color: var(--muted); }
+.gcard summary::after { content: "Открыть ↓"; font-size: .8rem; color: var(--jade); font-weight: 600; }
+.gcard[open] summary::after { content: "Свернуть ↑"; }
+.gintro { color: var(--muted); max-width: 72ch; }
+.gbody { padding: 0 22px 22px; display: grid; gap: 16px; }
+.gtools { display: flex; flex-wrap: wrap; gap: 8px; }
+.gbtn { font: inherit; font-size: .86rem; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.gbtn:hover { border-color: var(--jade); color: var(--jade); }
+.gbtn[aria-pressed="true"], .gbtn.playing { background: var(--jade); border-color: var(--jade); color: #fff; }
+.gstations { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; counter-reset: st; }
+.gst { counter-increment: st; position: relative; padding-left: 44px; max-width: 76ch; }
+.gst::before { content: attr(data-n); position: absolute; left: 0; top: 2px; width: 30px; height: 30px; border-radius: 50%; background: var(--jade-soft); color: var(--jade); display: grid; place-items: center; font-weight: 700; font-size: .9rem; }
+.gwhere { font-family: var(--f-mono); font-size: .74rem; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.gst h4 { margin: 2px 0 4px; font-size: 1.02rem; }
+.gst p { line-height: 1.65; }
+.stepmode .gst { display: none; }
+.stepmode .gst.cur { display: block; font-size: 1.08rem; }
+.gnav { display: flex; align-items: center; gap: 12px; }
+.gpos { font-family: var(--f-mono); font-size: .85rem; color: var(--muted); }
+.gextra { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.gfind, .gfact { background: var(--bg); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; }
+.gfind ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.gfind label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: .93rem; }
+.gfind input { margin-top: 4px; accent-color: var(--jade); width: 16px; height: 16px; flex: none; }
+.gfind input:checked + span { color: var(--muted); text-decoration: line-through; }
+.gfact p { font-size: .94rem; }
+.ptools { display: grid; gap: 10px; }
+#psearch { font: inherit; padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; max-width: 420px; }
+.ptabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ptab { font: inherit; font-size: .84rem; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.ptab[aria-pressed="true"] { background: var(--vermilion); border-color: var(--vermilion); color: #fff; }
+.plist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
+.phrase { display: grid; grid-template-columns: minmax(0, 1fr) auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pshow { font: inherit; text-align: left; background: none; border: 0; color: var(--ink); padding: 10px 12px; display: grid; gap: 1px; cursor: pointer; min-width: 0; }
+.pshow:hover { background: var(--bg); }
+.pru { font-size: .86rem; color: var(--muted); }
+.pzh { font-family: var(--f-zh); font-weight: 600; font-size: 1.35rem; line-height: 1.3; }
+.ppy { font-size: .8rem; color: var(--muted); }
+.ppy i { font-style: normal; color: var(--jade); }
+.psay { background: none; border: 0; border-left: 1px solid var(--line); color: var(--muted); padding: 0 12px; cursor: pointer; }
+.psay:hover { color: var(--jade); }
+.nums { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+.nums div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; }
+.nums b { font-family: var(--f-display); }
+.nums .zh { font-size: 1.3rem; }
+.nums small { color: var(--muted); font-size: .76rem; }
+.pbig { position: fixed; inset: 0; z-index: 50; background: var(--surface); display: grid; place-content: center; text-align: center; padding: 24px; gap: 14px; cursor: pointer; }
+.pbig-zh { font-family: var(--f-zh); font-weight: 900; font-size: clamp(3rem, 16vw, 9rem); line-height: 1.15; color: var(--ink); word-break: keep-all; }
+.pbig-py { font-size: 1.3rem; color: var(--muted); }
+.pbig-ru { font-size: 1.1rem; }
+.pbig-hint { font-size: .85rem; color: var(--muted); }
+.pclose { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: 16px; font-size: 1.4rem; background: none; border: 0; color: var(--muted); cursor: pointer; }
+.souvs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.souv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.souv .zh { color: var(--muted); font-size: .92rem; }
+.souv small { display: block; font-family: var(--f-mono); font-size: .74rem; color: var(--jade); margin-top: 2px; }
+.souv p { font-size: .88rem; color: var(--muted); margin-top: 4px; }
+.souv .p { font-family: var(--f-mono); font-size: .82rem; color: var(--gold); white-space: nowrap; }
+
+/* ---------- CHOICES / LEGS / STICKY ---------- */
+.timeline li.stop { position: relative; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding-block: 12px; }
+.timeline li.leg { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding-block: 0; align-items: center; }
+.legtxt { font-size: .82rem; color: var(--muted); font-family: var(--f-mono); padding: 3px 10px; border-radius: 6px; background: var(--surface); border: 1px dashed var(--line); justify-self: start; }
+.legtxt b { color: var(--ink); font-weight: 500; }
+.leg.walk .legtxt { border-color: color-mix(in srgb, var(--jade) 45%, transparent); }
+.price.var { background: var(--jade-soft); color: var(--jade); }
+.choice { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-top: 10px; }
+.opt { position: relative; display: grid; gap: 3px; align-content: start; padding: 10px 12px 10px 36px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; transition: border-color .15s, background .15s; min-width: 0; }
+.opt:hover { border-color: color-mix(in srgb, var(--vermilion) 50%, var(--line)); }
+.opt input { position: absolute; left: 12px; top: 13px; width: 16px; height: 16px; accent-color: var(--vermilion); margin: 0; }
+.opt:has(input:checked) { border-color: var(--vermilion); background: color-mix(in srgb, var(--vermilion) 7%, var(--surface)); }
+.opt:has(input:focus-visible) { outline: 2px solid var(--vermilion); outline-offset: 2px; }
+.opt .ot { font-weight: 600; font-size: .93rem; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.opt .op { font-family: var(--f-mono); font-size: .82rem; color: var(--gold); }
+.opt .on { font-size: .84rem; color: var(--muted); line-height: 1.45; }
+.opt .od { font-family: var(--f-mono); font-size: .76rem; color: var(--muted); }
+.opt:has(input:checked) .od { color: var(--vermilion); }
+.rec { font-family: var(--f-mono); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; background: var(--jade-soft); color: var(--jade); padding: 1px 7px; border-radius: 999px; font-weight: 500; }
+.hotels-choice { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 0; }
+.hotels-choice .opt { padding: 16px 16px 16px 40px; }
+.hotels-choice .opt input { top: 19px; left: 14px; }
+.hotels-choice .ot { font-family: var(--f-display); font-weight: 500; font-size: 1.05rem; }
+.sub-h { font-size: 1rem; font-family: var(--f-mono); font-weight: 500; letter-spacing: .04em; color: var(--muted); margin-top: 6px; }
+.chip.walk { background: var(--gold-soft); color: var(--gold); }
+.cost { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; }
+.cost > div { display: grid; gap: 2px; }
+.cost > div:last-child { text-align: right; }
+.cost .lbl { font-size: .78rem; color: var(--muted); }
+.trip { cursor: pointer; position: relative; transition: border-color .15s, box-shadow .15s; }
+.trip input { position: absolute; opacity: 0; pointer-events: none; }
+.trip:has(input:checked) { border-color: var(--vermilion); box-shadow: 0 0 0 2px var(--vermilion); }
+.trip:has(input:focus-visible) { outline: 2px solid var(--vermilion); outline-offset: 3px; }
+.trip-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.addbox { font-size: .8rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1.5px solid var(--line); white-space: nowrap; }
+.trip:has(input:checked) .addbox { background: var(--vermilion); border-color: var(--vermilion); color: #fff; }
+.trip:has(input:checked) .addbox::before { content: "✓ "; }
+.ph-empty { display: grid; place-items: center; background: linear-gradient(135deg, var(--vermilion), #7a1f14); }
+.ph-empty span { font-family: var(--f-zh); font-weight: 900; font-size: 4rem; color: rgba(255,255,255,.9); }
+.bar .b5 { background: var(--gold); }
+.sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--line); }
+.sticky-in { max-width: 1160px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; justify-content: space-between; }
+.sticky b { font-family: var(--f-display); font-weight: 700; font-size: 1.15rem; margin-left: 10px; }
+.s-meta { display: flex; gap: 14px; align-items: center; font-size: .86rem; color: var(--muted); }
+.s-meta a { color: var(--jade); font-weight: 600; text-decoration: none; }
+.s-meta button { font: inherit; font-size: .82rem; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+body { padding-bottom: 76px; }
+@media (max-width: 640px) { .sticky .eyebrow, .s-meta [data-upg] { display: none; } .sticky b { margin-left: 0; font-size: 1.05rem; } .sticky-in { flex-wrap: nowrap; } body { padding-bottom: 64px; } }
+
+@media (max-width: 900px) {
+  .overview, .day-body, .food-hero { grid-template-columns: 1fr; }
+  .map-card { position: static; }
+  .rest-cols, .trips, .stay, .shop-grid { grid-template-columns: 1fr; }
+  .etiquette { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .hero .inner { grid-template-columns: 1fr; padding-block: 110px 48px; }
+  .hero .vert { writing-mode: horizontal-tb; font-size: 3.6rem; order: -1; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts > div:nth-child(3) { border-left: 0; }
+  .facts > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .hotels, .prac, .check, .etiquette { grid-template-columns: 1fr; }
+  .day-head { grid-template-columns: 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr; grid-template-rows: 220px 140px; }
+  .g3 figure:first-child { grid-column: span 2; grid-row: auto; }
+  .g2 { grid-template-columns: 1fr; grid-template-rows: 220px 160px; }
+  .g1 { grid-template-rows: 240px; }
+  .bar div span { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* ---------- GUIDE PAGE ---------- */
+.ghead { padding-block: 28px 10px; display: grid; gap: 12px; max-width: 780px; }
+.ghead h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1; letter-spacing: -0.02em; margin: 0; }
+.ghead p { color: var(--muted); }
+.gtoc2 { display: grid; gap: 18px; margin-top: 24px; }
+.tday { display: grid; gap: 8px; }
+.tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.tcard { display: grid; grid-template-rows: 90px auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; text-decoration: none; color: var(--ink); font-size: .86rem; font-weight: 500; }
+.tcard img, .tcard .noimg { width: 100%; height: 90px; object-fit: cover; display: block; }
+.tcard span { padding: 6px 9px 8px; line-height: 1.3; }
+.tcard:hover { border-color: var(--vermilion); }
+.noimg { display: grid !important; place-items: center; background: var(--jade-soft); color: var(--jade); font-family: var(--f-zh); font-size: 2rem; }
+.chapters { display: grid; gap: 14px; margin-top: 30px; }
+.dayh { font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; margin: 26px 0 0; }
+.chap { scroll-margin-top: 14px; }
+.chap details { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.chap details[open] { border-color: color-mix(in srgb, var(--jade) 45%, var(--line)); }
+.chap summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 16px; padding: 14px; align-items: center; }
+.chap summary::-webkit-details-marker { display: none; }
+.sthumb img, .sthumb .noimg { width: 120px; height: 90px; object-fit: cover; border-radius: 10px; display: block; }
+.stext { display: grid; gap: 3px; min-width: 0; }
+.ctitle { font-family: var(--f-display); font-weight: 500; font-size: 1.18rem; line-height: 1.2; }
+.ctitle .zh { color: var(--muted); font-size: .95rem; }
+.hook { color: var(--ink); font-size: .95rem; }
+.sopen::after { content: "Открыть"; font-size: .8rem; font-weight: 600; color: var(--jade); white-space: nowrap; }
+details[open] .sopen::after { content: "Свернуть"; }
+.cbody { padding: 0 22px 24px; display: grid; gap: 18px; }
+.chero { margin: 0 -22px; position: relative; }
+.chero img { width: 100%; max-height: 460px; object-fit: cover; display: block; }
+.chero figcaption, .sfig figcaption { font-size: .8rem; color: var(--muted); padding: 6px 22px 0; }
+.sfig figcaption { padding: 6px 0 0; }
+.cintro { font-size: 1.08rem; max-width: 72ch; }
+.story { background: var(--bg); border-radius: 14px; padding: 18px 20px; display: grid; gap: 6px; max-width: 80ch; border-left: 4px solid var(--vermilion); }
+.story h4 { margin: 0; font-family: var(--f-display); font-weight: 500; font-size: 1.1rem; }
+.story p { line-height: 1.7; }
+.sfig { margin: 8px 0 10px; }
+.sfig img { width: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; display: block; }
+.gfact p + p { margin-top: 6px; }
+@media (max-width: 640px) {
+  .chap summary { grid-template-columns: 84px minmax(0, 1fr); }
+  .sthumb img, .sthumb .noimg { width: 84px; height: 72px; }
+  .sopen { display: none; }
+  .cbody { padding: 0 16px 20px; }
+  .chero { margin: 0 -16px; }
+}
+</style></head><body><div class="wrap"><nav class="sitenav" aria-label="Страницы"><a href="index.html">План поездки</a><a href="guide.html">Карманный гид</a><a href="phrases.html" aria-current="page">Словарик</a></nav>
+<header class="ghead"><span class="eyebrow">Словарик</span><h1>Фразы, которые реально пригодятся</h1><p>Нажмите на фразу, чтобы показать её собеседнику крупными иероглифами: это надёжнее, чем произносить. Значок динамика читает фразу голосом телефона. Русская транскрипция приблизительная, тоны в ней не передаются. В Гуанчжоу говорят по-кантонски, но путунхуа понимают все.</p></header>
+<div class="ptools"><input type="search" id="psearch" placeholder="Поиск по фразам…" aria-label="Поиск по словарику"><div class="ptabs"><button type="button" class="ptab" data-cat="all" aria-pressed="true">Все</button><button type="button" class="ptab" data-cat="c0" aria-pressed="false">Основное</button><button type="button" class="ptab" data-cat="c1" aria-pressed="false">Деньги и торг</button><button type="button" class="ptab" data-cat="c2" aria-pressed="false">Еда</button><button type="button" class="ptab" data-cat="c3" aria-pressed="false">Чай</button><button type="button" class="ptab" data-cat="c4" aria-pressed="false">Транспорт</button><button type="button" class="ptab" data-cat="c5" aria-pressed="false">Одежда и покупки</button><button type="button" class="ptab" data-cat="c6" aria-pressed="false">Отель</button><button type="button" class="ptab" data-cat="c7" aria-pressed="false">Экстренное</button><button type="button" class="ptab" data-cat="c8" aria-pressed="false">Кантонский бонус</button></div></div>
+<ul class="plist"><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="здравствуйте ни хао nǐ hǎo"><button type="button" class="pshow" aria-label="Показать крупно: Здравствуйте"><span class="pru">Здравствуйте</span><span class="pzh">你好</span><span class="ppy">nǐ hǎo · <i>ни хао</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="спасибо сесе xièxie"><button type="button" class="pshow" aria-label="Показать крупно: Спасибо"><span class="pru">Спасибо</span><span class="pzh">谢谢</span><span class="ppy">xièxie · <i>сесе</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="не за что бу кэци bú kèqi"><button type="button" class="pshow" aria-label="Показать крупно: Не за что"><span class="pru">Не за что</span><span class="pzh">不客气</span><span class="ppy">bú kèqi · <i>бу кэци</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="извините бу хао исы bù hǎo yìsi"><button type="button" class="pshow" aria-label="Показать крупно: Извините"><span class="pru">Извините</span><span class="pzh">不好意思</span><span class="ppy">bù hǎo yìsi · <i>бу хао исы</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="да / хорошо хао дэ hǎo de"><button type="button" class="pshow" aria-label="Показать крупно: Да / хорошо"><span class="pru">Да / хорошо</span><span class="pzh">好的</span><span class="ppy">hǎo de · <i>хао дэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="нет, не надо бу яо bú yào"><button type="button" class="pshow" aria-label="Показать крупно: Нет, не надо"><span class="pru">Нет, не надо</span><span class="pzh">不要</span><span class="ppy">bú yào · <i>бу яо</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="я не понимаю во тин бу дун wǒ tīng bu dǒng"><button type="button" class="pshow" aria-label="Показать крупно: Я не понимаю"><span class="pru">Я не понимаю</span><span class="pzh">我听不懂</span><span class="ppy">wǒ tīng bu dǒng · <i>во тин бу дун</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="вы говорите по-английски? ни хуэй шо инъюй ма nǐ huì shuō yīngyǔ ma"><button type="button" class="pshow" aria-label="Показать крупно: Вы говорите по-английски?"><span class="pru">Вы говорите по-английски?</span><span class="pzh">你会说英语吗？</span><span class="ppy">nǐ huì shuō Yīngyǔ ma · <i>ни хуэй шо инъюй ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="мы из россии вомэнь шы элосы жэнь wǒmen shì éluósī rén"><button type="button" class="pshow" aria-label="Показать крупно: Мы из России"><span class="pru">Мы из России</span><span class="pzh">我们是俄罗斯人</span><span class="ppy">wǒmen shì Éluósī rén · <i>вомэнь шы элосы жэнь</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="помогите, пожалуйста цин бан во исся qǐng bāng wǒ yíxià"><button type="button" class="pshow" aria-label="Показать крупно: Помогите, пожалуйста"><span class="pru">Помогите, пожалуйста</span><span class="pzh">请帮我一下</span><span class="ppy">qǐng bāng wǒ yíxià · <i>цин бан во исся</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="где туалет? сишоуцзянь цзай нали xǐshǒujiān zài nǎlǐ"><button type="button" class="pshow" aria-label="Показать крупно: Где туалет?"><span class="pru">Где туалет?</span><span class="pzh">洗手间在哪里？</span><span class="ppy">xǐshǒujiān zài nǎlǐ · <i>сишоуцзянь цзай нали</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c0" data-lang="zh-CN" data-search="можно сфотографировать? кэи пайчжао ма kěyǐ pāizhào ma"><button type="button" class="pshow" aria-label="Показать крупно: Можно сфотографировать?"><span class="pru">Можно сфотографировать?</span><span class="pzh">可以拍照吗？</span><span class="ppy">kěyǐ pāizhào ma · <i>кэи пайчжао ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="сколько стоит? дуошао цянь duōshao qián"><button type="button" class="pshow" aria-label="Показать крупно: Сколько стоит?"><span class="pru">Сколько стоит?</span><span class="pzh">多少钱？</span><span class="ppy">duōshao qián · <i>дуошао цянь</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="слишком дорого тай гуй лэ tài guì le"><button type="button" class="pshow" aria-label="Показать крупно: Слишком дорого"><span class="pru">Слишком дорого</span><span class="pzh">太贵了</span><span class="ppy">tài guì le · <i>тай гуй лэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="можно дешевле? пяньи идянь ба piányi yìdiǎn ba"><button type="button" class="pshow" aria-label="Показать крупно: Можно дешевле?"><span class="pru">Можно дешевле?</span><span class="pzh">便宜一点吧</span><span class="ppy">piányi yìdiǎn ba · <i>пяньи идянь ба</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="какая последняя цена? цзуй ди дуошао zuì dī duōshao"><button type="button" class="pshow" aria-label="Показать крупно: Какая последняя цена?"><span class="pru">Какая последняя цена?</span><span class="pzh">最低多少？</span><span class="ppy">zuì dī duōshao · <i>цзуй ди дуошао</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="беру это во яо чжэгэ wǒ yào zhège"><button type="button" class="pshow" aria-label="Показать крупно: Беру это"><span class="pru">Беру это</span><span class="pzh">我要这个</span><span class="ppy">wǒ yào zhège · <i>во яо чжэгэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="можно наличными? кэи фу сяньцзинь ма kěyǐ fù xiànjīn ma"><button type="button" class="pshow" aria-label="Показать крупно: Можно наличными?"><span class="pru">Можно наличными?</span><span class="pzh">可以付现金吗？</span><span class="ppy">kěyǐ fù xiànjīn ma · <i>кэи фу сяньцзинь ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="напишите цену цин се исся цзягэ qǐng xiě yíxià jiàgé"><button type="button" class="pshow" aria-label="Показать крупно: Напишите цену"><span class="pru">Напишите цену</span><span class="pzh">请写一下价格</span><span class="ppy">qǐng xiě yíxià jiàgé · <i>цин се исся цзягэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c1" data-lang="zh-CN" data-search="tax free есть? кэи туйшуй ма kěyǐ tuìshuì ma"><button type="button" class="pshow" aria-label="Показать крупно: Tax Free есть?"><span class="pru">Tax Free есть?</span><span class="pzh">可以退税吗？</span><span class="ppy">kěyǐ tuìshuì ma · <i>кэи туйшуй ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="меню, пожалуйста цин гэй во цайдань qǐng gěi wǒ càidān"><button type="button" class="pshow" aria-label="Показать крупно: Меню, пожалуйста"><span class="pru">Меню, пожалуйста</span><span class="pzh">请给我菜单</span><span class="ppy">qǐng gěi wǒ càidān · <i>цин гэй во цайдань</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="вот это (показать) чжэгэ zhège"><button type="button" class="pshow" aria-label="Показать крупно: Вот это (показать)"><span class="pru">Вот это (показать)</span><span class="pzh">这个</span><span class="ppy">zhège · <i>чжэгэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="нас двое лян гэ жэнь liǎng ge rén"><button type="button" class="pshow" aria-label="Показать крупно: Нас двое"><span class="pru">Нас двое</span><span class="pzh">两个人</span><span class="ppy">liǎng ge rén · <i>лян гэ жэнь</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="не острое бу яо ла bú yào là"><button type="button" class="pshow" aria-label="Показать крупно: Не острое"><span class="pru">Не острое</span><span class="pzh">不要辣</span><span class="ppy">bú yào là · <i>бу яо ла</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="без кинзы бу яо сянцай bú yào xiāngcài"><button type="button" class="pshow" aria-label="Показать крупно: Без кинзы"><span class="pru">Без кинзы</span><span class="pzh">不要香菜</span><span class="ppy">bú yào xiāngcài · <i>бу яо сянцай</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="я не ем свинину во бу чи чжужоу wǒ bù chī zhūròu"><button type="button" class="pshow" aria-label="Показать крупно: Я не ем свинину"><span class="pru">Я не ем свинину</span><span class="pzh">我不吃猪肉</span><span class="ppy">wǒ bù chī zhūròu · <i>во бу чи чжужоу</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="аллергия на орехи во дуй цзяньго гоминь wǒ duì jiānguǒ guòmǐn"><button type="button" class="pshow" aria-label="Показать крупно: Аллергия на орехи"><span class="pru">Аллергия на орехи</span><span class="pzh">我对坚果过敏</span><span class="ppy">wǒ duì jiānguǒ guòmǐn · <i>во дуй цзяньго гоминь</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="очень вкусно хэнь хаочи hěn hǎochī"><button type="button" class="pshow" aria-label="Показать крупно: Очень вкусно"><span class="pru">Очень вкусно</span><span class="pzh">很好吃</span><span class="ppy">hěn hǎochī · <i>хэнь хаочи</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="счёт, пожалуйста майдань mǎidān"><button type="button" class="pshow" aria-label="Показать крупно: Счёт, пожалуйста"><span class="pru">Счёт, пожалуйста</span><span class="pzh">买单</span><span class="ppy">mǎidān · <i>майдань</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="с собой дабао dǎbāo"><button type="button" class="pshow" aria-label="Показать крупно: С собой"><span class="pru">С собой</span><span class="pzh">打包</span><span class="ppy">dǎbāo · <i>дабао</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="стакан воды и бэй шуй yì bēi shuǐ"><button type="button" class="pshow" aria-label="Показать крупно: Стакан воды"><span class="pru">Стакан воды</span><span class="pzh">一杯水</span><span class="ppy">yì bēi shuǐ · <i>и бэй шуй</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c2" data-lang="zh-CN" data-search="пиво пицзю píjiǔ"><button type="button" class="pshow" aria-label="Показать крупно: Пиво"><span class="pru">Пиво</span><span class="pzh">啤酒</span><span class="ppy">píjiǔ · <i>пицзю</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c3" data-lang="zh-CN" data-search="можно попробовать? кэи ши хэ ма kěyǐ shì hē ma"><button type="button" class="pshow" aria-label="Показать крупно: Можно попробовать?"><span class="pru">Можно попробовать?</span><span class="pzh">可以试喝吗？</span><span class="ppy">kěyǐ shì hē ma · <i>кэи ши хэ ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c3" data-lang="zh-CN" data-search="пуэр пуэр pǔ&#x27;ěr"><button type="button" class="pshow" aria-label="Показать крупно: Пуэр"><span class="pru">Пуэр</span><span class="pzh">普洱</span><span class="ppy">pǔ&#x27;ěr · <i>пуэр</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c3" data-lang="zh-CN" data-search="улун улун wūlóng"><button type="button" class="pshow" aria-label="Показать крупно: Улун"><span class="pru">Улун</span><span class="pzh">乌龙</span><span class="ppy">wūlóng · <i>улун</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c3" data-lang="zh-CN" data-search="зелёный чай люйча lǜchá"><button type="button" class="pshow" aria-label="Показать крупно: Зелёный чай"><span class="pru">Зелёный чай</span><span class="pzh">绿茶</span><span class="ppy">lǜchá · <i>люйча</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c3" data-lang="zh-CN" data-search="белый чай байча báichá"><button type="button" class="pshow" aria-label="Показать крупно: Белый чай"><span class="pru">Белый чай</span><span class="pzh">白茶</span><span class="ppy">báichá · <i>байча</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c3" data-lang="zh-CN" data-search="сколько за цзинь (500 г)? и цзинь дуошао цянь yì jīn duōshao qián"><button type="button" class="pshow" aria-label="Показать крупно: Сколько за цзинь (500 г)?"><span class="pru">Сколько за цзинь (500 г)?</span><span class="pzh">一斤多少钱？</span><span class="ppy">yì jīn duōshao qián · <i>и цзинь дуошао цянь</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c3" data-lang="zh-CN" data-search="какого года чай? чжэ шы на и нянь дэ zhè shì nǎ yì nián de"><button type="button" class="pshow" aria-label="Показать крупно: Какого года чай?"><span class="pru">Какого года чай?</span><span class="pzh">这是哪一年的？</span><span class="ppy">zhè shì nǎ yì nián de · <i>чжэ шы на и нянь дэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="отвезите сюда (показать адрес) цин дай во цюй чжэли qǐng dài wǒ qù zhèlǐ"><button type="button" class="pshow" aria-label="Показать крупно: Отвезите сюда (показать адрес)"><span class="pru">Отвезите сюда (показать адрес)</span><span class="pzh">请带我去这里</span><span class="ppy">qǐng dài wǒ qù zhèlǐ · <i>цин дай во цюй чжэли</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="остановите здесь чжэли тин zhèlǐ tíng"><button type="button" class="pshow" aria-label="Показать крупно: Остановите здесь"><span class="pru">Остановите здесь</span><span class="pzh">这里停</span><span class="ppy">zhèlǐ tíng · <i>чжэли тин</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="метро дитэ dìtiě"><button type="button" class="pshow" aria-label="Показать крупно: Метро"><span class="pru">Метро</span><span class="pzh">地铁</span><span class="ppy">dìtiě · <i>дитэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="железнодорожный вокзал хочэчжань huǒchēzhàn"><button type="button" class="pshow" aria-label="Показать крупно: Железнодорожный вокзал"><span class="pru">Железнодорожный вокзал</span><span class="pzh">火车站</span><span class="ppy">huǒchēzhàn · <i>хочэчжань</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="аэропорт цзичан jīchǎng"><button type="button" class="pshow" aria-label="Показать крупно: Аэропорт"><span class="pru">Аэропорт</span><span class="pzh">机场</span><span class="ppy">jīchǎng · <i>цзичан</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="сколько ехать? яо дуоцзю yào duōjiǔ"><button type="button" class="pshow" aria-label="Показать крупно: Сколько ехать?"><span class="pru">Сколько ехать?</span><span class="pzh">要多久？</span><span class="ppy">yào duōjiǔ · <i>яо дуоцзю</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="откройте багажник цин кай хоубэйсян qǐng kāi hòubèixiāng"><button type="button" class="pshow" aria-label="Показать крупно: Откройте багажник"><span class="pru">Откройте багажник</span><span class="pzh">请开后备箱</span><span class="ppy">qǐng kāi hòubèixiāng · <i>цин кай хоубэйсян</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c4" data-lang="zh-CN" data-search="где выход? чукоу цзай нали chūkǒu zài nǎlǐ"><button type="button" class="pshow" aria-label="Показать крупно: Где выход?"><span class="pru">Где выход?</span><span class="pzh">出口在哪里？</span><span class="ppy">chūkǒu zài nǎlǐ · <i>чукоу цзай нали</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="можно примерить? кэи ши исся ма kěyǐ shì yíxià ma"><button type="button" class="pshow" aria-label="Показать крупно: Можно примерить?"><span class="pru">Можно примерить?</span><span class="pzh">可以试一下吗？</span><span class="ppy">kěyǐ shì yíxià ma · <i>кэи ши исся ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="есть на размер больше? ю да и хао дэ ма yǒu dà yí hào de ma"><button type="button" class="pshow" aria-label="Показать крупно: Есть на размер больше?"><span class="pru">Есть на размер больше?</span><span class="pzh">有大一号的吗？</span><span class="ppy">yǒu dà yí hào de ma · <i>ю да и хао дэ ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="другой цвет есть? ю бе дэ яньсэ ма yǒu bié de yánsè ma"><button type="button" class="pshow" aria-label="Показать крупно: Другой цвет есть?"><span class="pru">Другой цвет есть?</span><span class="pzh">有别的颜色吗？</span><span class="ppy">yǒu bié de yánsè ma · <i>ю бе дэ яньсэ ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="продаёте поштучно? дань цзянь май ма dān jiàn mài ma"><button type="button" class="pshow" aria-label="Показать крупно: Продаёте поштучно?"><span class="pru">Продаёте поштучно?</span><span class="pzh">单件卖吗？</span><span class="ppy">dān jiàn mài ma · <i>дань цзянь май ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="чемодан синлисян xínglixiāng"><button type="button" class="pshow" aria-label="Показать крупно: Чемодан"><span class="pru">Чемодан</span><span class="pzh">行李箱</span><span class="ppy">xínglixiāng · <i>синлисян</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="пакет, пожалуйста гэй во и гэ дайцзы gěi wǒ yí ge dàizi"><button type="button" class="pshow" aria-label="Показать крупно: Пакет, пожалуйста"><span class="pru">Пакет, пожалуйста</span><span class="pzh">给我一个袋子</span><span class="ppy">gěi wǒ yí ge dàizi · <i>гэй во и гэ дайцзы</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="в телефоне есть русский язык? ю эюй ма yǒu éyǔ ma"><button type="button" class="pshow" aria-label="Показать крупно: В телефоне есть русский язык?"><span class="pru">В телефоне есть русский язык?</span><span class="pzh">有俄语吗？</span><span class="ppy">yǒu Éyǔ ma · <i>ю эюй ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c5" data-lang="zh-CN" data-search="это глобальная версия? шы гоцзи бань ма shì guójì bǎn ma"><button type="button" class="pshow" aria-label="Показать крупно: Это глобальная версия?"><span class="pru">Это глобальная версия?</span><span class="pzh">是国际版吗？</span><span class="ppy">shì guójì bǎn ma · <i>шы гоцзи бань ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c6" data-lang="zh-CN" data-search="у меня бронь во ю юйдин wǒ yǒu yùdìng"><button type="button" class="pshow" aria-label="Показать крупно: У меня бронь"><span class="pru">У меня бронь</span><span class="pzh">我有预订</span><span class="ppy">wǒ yǒu yùdìng · <i>во ю юйдин</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c6" data-lang="zh-CN" data-search="можно оставить багаж? кэи цзицунь синли ма kěyǐ jìcún xíngli ma"><button type="button" class="pshow" aria-label="Показать крупно: Можно оставить багаж?"><span class="pru">Можно оставить багаж?</span><span class="pzh">可以寄存行李吗？</span><span class="ppy">kěyǐ jìcún xíngli ma · <i>кэи цзицунь синли ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c6" data-lang="zh-CN" data-search="какой пароль от wi-fi? вайфай мима шы дуошао wifi mìmǎ shì duōshao"><button type="button" class="pshow" aria-label="Показать крупно: Какой пароль от Wi-Fi?"><span class="pru">Какой пароль от Wi-Fi?</span><span class="pzh">WiFi密码是多少？</span><span class="ppy">WiFi mìmǎ shì duōshao · <i>вайфай мима шы дуошао</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c6" data-lang="zh-CN" data-search="можно поздний выезд? кэи вань идянь туйфан ма kěyǐ wǎn yìdiǎn tuìfáng ma"><button type="button" class="pshow" aria-label="Показать крупно: Можно поздний выезд?"><span class="pru">Можно поздний выезд?</span><span class="pzh">可以晚一点退房吗？</span><span class="ppy">kěyǐ wǎn yìdiǎn tuìfáng ma · <i>кэи вань идянь туйфан ма</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c7" data-lang="zh-CN" data-search="мне плохо во бу шуфу wǒ bù shūfu"><button type="button" class="pshow" aria-label="Показать крупно: Мне плохо"><span class="pru">Мне плохо</span><span class="pzh">我不舒服</span><span class="ppy">wǒ bù shūfu · <i>во бу шуфу</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c7" data-lang="zh-CN" data-search="нужен врач во сюйяо ишэн wǒ xūyào yīshēng"><button type="button" class="pshow" aria-label="Показать крупно: Нужен врач"><span class="pru">Нужен врач</span><span class="pzh">我需要医生</span><span class="ppy">wǒ xūyào yīshēng · <i>во сюйяо ишэн</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c7" data-lang="zh-CN" data-search="аптека яодянь yàodiàn"><button type="button" class="pshow" aria-label="Показать крупно: Аптека"><span class="pru">Аптека</span><span class="pzh">药店</span><span class="ppy">yàodiàn · <i>яодянь</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c7" data-lang="zh-CN" data-search="больница июань yīyuàn"><button type="button" class="pshow" aria-label="Показать крупно: Больница"><span class="pru">Больница</span><span class="pzh">医院</span><span class="ppy">yīyuàn · <i>июань</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c7" data-lang="zh-CN" data-search="полиция (110), скорая (120) цзинча · цзицзю jǐngchá · jíjiù"><button type="button" class="pshow" aria-label="Показать крупно: Полиция (110), скорая (120)"><span class="pru">Полиция (110), скорая (120)</span><span class="pzh">警察 110 · 急救 120</span><span class="ppy">jǐngchá · jíjiù · <i>цзинча · цзицзю</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c7" data-lang="zh-CN" data-search="я потерялся во милу лэ wǒ mílù le"><button type="button" class="pshow" aria-label="Показать крупно: Я потерялся"><span class="pru">Я потерялся</span><span class="pzh">我迷路了</span><span class="ppy">wǒ mílù le · <i>во милу лэ</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c8" data-lang="zh-HK" data-search="спасибо (за услугу), извините мгой m̀h gōi"><button type="button" class="pshow" aria-label="Показать крупно: Спасибо (за услугу), извините"><span class="pru">Спасибо (за услугу), извините</span><span class="pzh">唔该</span><span class="ppy">m̀h gōi · <i>мгой</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c8" data-lang="zh-HK" data-search="спасибо (за подарок) доче dō jeh"><button type="button" class="pshow" aria-label="Показать крупно: Спасибо (за подарок)"><span class="pru">Спасибо (за подарок)</span><span class="pzh">多谢</span><span class="ppy">dō jeh · <i>доче</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c8" data-lang="zh-HK" data-search="доброе утро цоу сань jóu sàhn"><button type="button" class="pshow" aria-label="Показать крупно: Доброе утро"><span class="pru">Доброе утро</span><span class="pzh">早晨</span><span class="ppy">jóu sàhn · <i>цоу сань</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c8" data-lang="zh-HK" data-search="счёт (по-кантонски) маай даан màaih dāan"><button type="button" class="pshow" aria-label="Показать крупно: Счёт (по-кантонски)"><span class="pru">Счёт (по-кантонски)</span><span class="pzh">埋单</span><span class="ppy">màaih dāan · <i>маай даан</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li><li class="phrase" data-cat="c8" data-lang="zh-HK" data-search="очень вкусно (по-кантонски) хоу хоу сик hóu hóu sihk"><button type="button" class="pshow" aria-label="Показать крупно: Очень вкусно (по-кантонски)"><span class="pru">Очень вкусно (по-кантонски)</span><span class="pzh">好好食</span><span class="ppy">hóu hóu sihk · <i>хоу хоу сик</i></span></button><button type="button" class="psay" aria-label="Произнести"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></li></ul>
+<h2 class="dayh">Цифры</h2><div class="nums"><div><b>1</b><span class="zh">一</span><small>yī · и</small></div><div><b>2</b><span class="zh">二 / 两</span><small>èr / liǎng · эр / лян</small></div><div><b>3</b><span class="zh">三</span><small>sān · сань</small></div><div><b>4</b><span class="zh">四</span><small>sì · сы</small></div><div><b>5</b><span class="zh">五</span><small>wǔ · у</small></div><div><b>6</b><span class="zh">六</span><small>liù · лю</small></div><div><b>7</b><span class="zh">七</span><small>qī · ци</small></div><div><b>8</b><span class="zh">八</span><small>bā · ба</small></div><div><b>9</b><span class="zh">九</span><small>jiǔ · цзю</small></div><div><b>10</b><span class="zh">十</span><small>shí · шы</small></div><div><b>100</b><span class="zh">一百</span><small>yìbǎi · ибай</small></div><div><b>1000</b><span class="zh">一千</span><small>yìqiān · ицянь</small></div></div>
+<p class="note"><b>Цифры на пальцах.</b> Китайцы показывают 6–10 одной рукой: 6 — большой палец и мизинец, 7 — щепоть, 8 — большой и указательный «пистолетом», 9 — согнутый указательный крючком, 10 — кулак или скрещённые указательные. На рынке проще всего набрать цену на калькуляторе телефона.</p></div>
+<div class="pbig" id="pbig" hidden role="dialog" aria-modal="true" aria-label="Фраза крупно"><button type="button" class="pclose" aria-label="Закрыть">✕</button><div class="pbig-zh"></div><div class="pbig-py"></div><div class="pbig-ru"></div><p class="pbig-hint">Покажите экран собеседнику. Нажмите в любом месте, чтобы закрыть.</p></div><script>(function () {
+  var synth = window.speechSynthesis;
+  function voiceFor(lang) { if (!synth) return null; var vs = synth.getVoices() || [], pre = lang.slice(0, 2);
+    return vs.find(function (v) { return v.lang && v.lang.replace('_', '-').toLowerCase() === lang.toLowerCase(); }) || vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf(pre) === 0; }) || null; }
+  function speak(text, lang) { if (!synth) return; synth.cancel(); var u = new SpeechSynthesisUtterance(text); u.lang = lang; var v = voiceFor(lang); if (v) u.voice = v; u.rate = 0.85; synth.speak(u); }
+  if (!synth) document.querySelectorAll('.psay').forEach(function (b) { b.hidden = true; });
+  var cat = 'all', q = '', items = document.querySelectorAll('.phrase');
+  function filter() { items.forEach(function (li) { li.hidden = !((cat === 'all' || li.getAttribute('data-cat') === cat) && (!q || li.getAttribute('data-search').indexOf(q) >= 0 || li.querySelector('.pzh').textContent.indexOf(q) >= 0)); }); }
+  document.querySelectorAll('.ptab').forEach(function (b) { b.addEventListener('click', function () { document.querySelectorAll('.ptab').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); cat = b.getAttribute('data-cat'); filter(); }); });
+  var ps = document.getElementById('psearch'); if (ps) ps.addEventListener('input', function () { q = ps.value.trim().toLowerCase(); filter(); });
+  var big = document.getElementById('pbig');
+  document.querySelectorAll('.pshow').forEach(function (b) { b.addEventListener('click', function () {
+    big.querySelector('.pbig-zh').textContent = b.querySelector('.pzh').textContent; big.querySelector('.pbig-py').textContent = b.querySelector('.ppy').textContent;
+    big.querySelector('.pbig-ru').textContent = b.querySelector('.pru').textContent; big.hidden = false; }); });
+  big.addEventListener('click', function () { big.hidden = true; });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') big.hidden = true; });
+  document.querySelectorAll('.psay').forEach(function (b) { b.addEventListener('click', function () { var li = b.closest('.phrase'); speak(li.querySelector('.pzh').textContent.replace(/[0-9·]/g, ' '), li.getAttribute('data-lang')); }); });
+})();
+</script></body></html>
